@@ -390,32 +390,77 @@ function group(array, keySelector, valueSelector) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  ans: '',
+  element(value) {
+    const tempAns = Object.create(cssSelectorBuilder);
+    tempAns.index = 1;
+    this.makeError(1);
+    tempAns.ans = `${value}`;
+    return tempAns;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    const tempAns = Object.create(cssSelectorBuilder);
+    tempAns.index = 2;
+    this.makeError(2);
+    tempAns.ans = `${this.ans}#${value}`;
+    return tempAns;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    const tempAns = Object.create(cssSelectorBuilder);
+    tempAns.index = 3;
+    this.makeError(3);
+    tempAns.ans = `${this.ans}.${value}`;
+    return tempAns;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    const tempAns = Object.create(cssSelectorBuilder);
+    tempAns.index = 4;
+    this.makeError(4);
+    tempAns.ans = `${this.ans}[${value}]`;
+    return tempAns;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    const tempAns = Object.create(cssSelectorBuilder);
+    tempAns.index = 5;
+    this.makeError(5);
+
+    tempAns.ans = `${this.ans}:${value}`;
+    return tempAns;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    const tempAns = Object.create(cssSelectorBuilder);
+    tempAns.index = 6;
+    this.makeError(6);
+    tempAns.ans = `${this.ans}::${value}`;
+    return tempAns;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    const tempAns = Object.create(cssSelectorBuilder);
+    tempAns.ans = `${selector1.ans} ${combinator} ${selector2.ans}`;
+    return tempAns;
+  },
+  stringify() {
+    return this.ans;
+  },
+  makeError(idIndex) {
+    if (this.index > idIndex) {
+      throw Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    } else if (
+      (idIndex === 1 || idIndex === 2 || idIndex === 6) &&
+      this.index === idIndex
+    ) {
+      throw Error(
+        'Element, id and pseudo-element should not occur more then one time inside the selector'
+      );
+    }
   },
 };
 
